@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+		<title>Costume History</title>
+		<link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css">
+		<script src="https://js.arcgis.com/4.19/"></script>
+		
+        <style>
+            body {
+                overflow: hidden;
+                padding: 0;
+                margin: 0;
+            }
+
+            .container {
+                transition: transform 1s ease-in;
+            }
+
+            .page {
+                height: 100vh;
+                font-size: 40px;
+                color: #fff;
+                font-weight: 600;
+                text-align: center;
+                /*line-height: 100vh;*/
+            }
+
+			.page-1 {
+			    background:#f3fdff;
+				width: 100%;
+			}
+            .page-2 {
+                background:#00ffa1;
+				width: 100%;
+            }
+            .page-3 {
+                background:#bcf1ae;
+				width: 100%;
+            }
+            .page-4 {
+                background:#dab573;
+				width: 100%;
+            }
+            .page-5 {
+                background:#c3d86d;
+				width: 100%;
+            }
+			.page-6 {
+			    background:#ffff7f;
+				width: 100%;
+			}
+			#viewDiv1,#viewDiv2,#viewDiv3,#viewDiv4,#viewDiv5{
+				width: 80%;
+				height: 100%;
+				float: left;
+				text-shadow: 2px 2px #e8add4;
+			}
+			#Div1,#Div2,#Div3,#Div4,#Div5{
+				width: 20%;
+				height: 100%;
+				float: left;
+			}
+			
+			#about-me{
+			  font-family: 'Handlee', cursive;
+			  border-radius:15px;
+			}
+			#about-me h2{
+			  display:inline-block;
+			  text-align:center;
+			  border:5px dashed #20bcd5;
+			  padding:20px 15px;
+			  color:#20bcd5;
+			  margin:auto 10px;
+			}
+			#about-me .content{
+			  font-size:25px;
+			  color: #000000;
+			}
+			#about-me .right{
+			  font-size:25px;
+			  color: #000000;
+			}
+			
+			[class*="esri-popup--is-docked-top-"] .esri-popup__footer, [class*="esri-popup--aligned-bottom-"] .esri-popup__footer {
+			    border-bottom: solid 1px #6e6e6e4d;
+			}
+			.esri-popup__header{
+			    border-top-left-radius: 5px !important;
+			    border-top-right-radius: 5px;
+			    background-color: #fff;
+			    color: #fff;
+			}
+			.esri-popup--shadow {
+			    box-shadow: 0 1px 4px rgb(155, 155, 155) !important;
+			}
+			.esri-popup__header-title{
+			    background-color: #009688 !important;
+			}
+			.esri-popup__header-container, .esri-popup__header-container--button{
+			    outline: none !important;
+			}
+			.esri-popup__icon, .esri-icon-close{
+			    color: #000000 !important;
+			}
+			.esri-view-width-xlarge .esri-popup__main-container {
+			    width: 360px !important;
+			    border-radius: 5px !important;
+			}
+			.esri-ui .esri-popup {
+			    border-radius: 5px !important;
+			}
+			.esri-popup__button{
+			    background-color: transparent !important;
+			    outline: none;
+			}
+			.esri-popup__header-title{
+			    font-weight: 600 !important;
+			}
+		
+
+			
+        </style>
+		
+		<script>
+		    require(["esri/config",
+		    "esri/Map","esri/views/MapView",
+		    "esri/layers/FeatureLayer",
+		    "esri/renderers/SimpleRenderer",
+		    "esri/symbols/SimpleFillSymbol",
+			"esri/symbols/PictureFillSymbol",
+			"esri/widgets/Legend","esri/renderers/support/UniqueValueInfo",
+			"esri/PopupTemplate"],
+			function (esriConfig, Map, MapView,FeatureLayer,
+			SimpleRenderer,SimpleFillSymbol,PictureFillSymbol,Legend,UniqueValueInfo,
+			PopupTemplate) {
+		        esriConfig.apiKey = "AAPK56e3ac027f044c4089d8ceec232fc05dYaOuzVRzm8tMRqvzOvDvIEevbqJ85yppn9PacU6cy4duurJrVK9wo_8BcWO8i8bi";
+		
+		        const map1= new Map({basemap: "arcgis-colored-pencil"});
+				const map2= new Map({basemap: "arcgis-colored-pencil"});
+				const map3= new Map({basemap: "arcgis-colored-pencil"});
+				const map4= new Map({basemap: "arcgis-colored-pencil"});
+				const map5= new Map({basemap: "arcgis-colored-pencil"});
+				
+		        const view1 = new MapView({
+		            map: map1,
+		            center: [114,35], // Longitude, latitude
+		            zoom: 2, // Zoom level
+		            container: "viewDiv1",
+		        });
+				
+				const view2 = new MapView({
+				    map: map2,
+				    center: [114, 35], // Longitude, latitude
+				    zoom: 2, // Zoom level
+				    container: "viewDiv2" // Div element
+				});
+				
+				const view3 = new MapView({
+				    map: map3,
+				    center: [114, 35], // Longitude, latitude
+				    zoom: 2, // Zoom level
+				    container: "viewDiv3" // Div element
+				});
+				
+				const view4 = new MapView({
+				    map: map4,
+				    center: [114, 35], // Longitude, latitude
+				    zoom: 2, // Zoom level
+				    container: "viewDiv4" // Div element
+				});
+				
+				const view5 = new MapView({
+				    map: map5,
+				    center: [114, 35], // Longitude, latitude
+				    zoom: 2, // Zoom level
+				    container: "viewDiv5" // Div element
+				});
+				
+				const popupTang = {
+				    "title": "唐朝女子服饰",
+				    "content": [{
+						type: "text", // Autocasts as new TextContent
+						text: "唐代服饰是中国服饰史上的一朵奇葩，这一时期的服饰异彩纷呈，特色较为鲜明。服饰方面具体表现为：中外融合，胡汉杂糅，呈现出许多前所未有的服饰特色。"
+					},
+					{
+					type: "media",
+					mediaInfos:[{
+						title: "<b>簪花仕女图</b>",
+					    type: "image", // Autocasts as new ImageMediaInfo object
+					    caption: "诃子裙·大袖衫",
+					    // Autocasts as new ImageMediaInfoValue object
+					    value: {
+					      sourceURL: "https://pic4.zhimg.com/v2-efe21cbe0b208f37349764135d36b328_r.jpg?source=1940ef5c"
+						}
+					}]
+					}]
+				};
+				
+				const tang741 = new FeatureLayer({
+		            url:"https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/Tang_Empire_741/FeatureServer",
+					popupTemplate: popupTang
+				});
+		        map1.add(tang741);
+				
+				const popupSong = {
+				    "title": "宋朝女子服饰",
+				    "content":[
+						{
+					    type: "text", // Autocasts as new TextContent
+					    text: "不似唐朝女子服饰的贵气飘逸，提起宋制女子服饰，或许我们想到的是婉约、素静的感觉。宋朝是中国历史上文人气质最盛的朝代，宋代女子服饰在继承唐代女性服饰形制的同时，结合自身时代特征又开创了独属于宋的穿衣模式。其审美标准是带有清逸之气的瘦削骨感，更加崇尚修长适体，用料加工考究，色调柔和，整体清淡、柔和、典雅，富有浓郁的生活气息。宋朝女子服饰的美恰似山间的潺潺流水的清泉，在不经意间，给人以沁人心脾的舒适。"
+						},
+						{
+						type: "media",
+						mediaInfos:[{
+							title: "<b>古画</b>",
+						    type: "image", // Autocasts as new ImageMediaInfo object
+						    caption: "褙子",
+						    // Autocasts as new ImageMediaInfoValue object
+						    value: {
+						      sourceURL: "https://cdn.91tumi.com/c0eace0b64597266ecec4e7d656b8b35.jpg"
+							}
+						}]
+						}]
+					};
+				
+				
+				const song = new FeatureLayer({
+					url : "https://services7.arcgis.com/iEMmryaM5E3wkdnU/ArcGIS/rest/services/Song_Dynasty_960_1279/FeatureServer",
+					popupTemplate: popupSong
+				});
+				map2.add(song)
+				
+				const popupYuan = {
+				    "title": "元朝女子服饰",
+				    "content": [{
+						type: "text", // Autocasts as new TextContent
+						text: "元代妇女服装分贵族和平民两种衣。贵族多为蒙古人，以皮衣皮帽为民族装，材料多为貂鼠皮和羊皮。多为宽大的袍式，衣袖形似灯笼，袖口窄小，袖身宽肥。这种袍式肩部装饰十分华美。面料质地十分考究，采用云锦、茸类及毛毡织物，颜色多为红色。"
+					},
+					{
+					type: "media",
+					mediaInfos:[{
+						title: "<b>1271-1368 AD</b>",
+					    type: "image", // Autocasts as new ImageMediaInfo object
+					    caption: "under Mongol rule",
+					    // Autocasts as new ImageMediaInfoValue object
+					    value: {
+					      sourceURL: "https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=1688629821,3449870201&fm=173&app=25&f=JPEG?w=640&h=1187&s=DD3AA7570170F7DC48A7256C0300A06B"
+						}
+					}]
+					}]
+				};
+				
+				const yuan = new FeatureLayer({
+					url:"https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/Mongol_Empire_Yuan_Dynasty_/FeatureServer",
+					popupTemplate: popupYuan
+				});
+				map3.add(yuan)
+				
+				const popupMing = {
+				    "title": "明朝女子服饰",
+				    "content": [{
+						type: "text", // Autocasts as new TextContent
+						text: "明代妇女的服装，主要有衫、袄、霞帔、褙子、比甲及裙子等。衣服的基本样式，大多仿自唐宋，一般都为右衽，恢复了汉族的习俗。"
+					},
+					{
+					type: "media",
+					mediaInfos:[{
+						title: "<b>命妇像</b>",
+					    type: "image", // Autocasts as new ImageMediaInfo object
+					    caption: "现藏于美国大都会博物馆",
+					    // Autocasts as new ImageMediaInfoValue object
+					    value: {
+					      sourceURL: "https://imgsa.baidu.com/forum/pic/item/fb838b13632762d037079eb7abec08fa513dc668.jpg"
+						}
+					}]
+					}]
+				};
+				
+				const ming1582 = new FeatureLayer({
+					url:"https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/1582_Ming/FeatureServer",
+					popupTemplate: popupMing
+				});
+				map4.add(ming1582)
+				
+				const popupQing = {
+				    "title": "清朝女子服饰",
+				    "content": [{
+						type: "text", // Autocasts as new TextContent
+						text:  "清代女子服装,有公服、礼服和常服。公服是自皇后至七品命妇规定的服制;礼服在民间指的是吉服或丧服。婚丧嫁娶及寿日的衣服,宫廷中是按命妇的品级规定的;常服形式多,变化服用也自由得多。"
+					},
+					{
+					type: "media",
+					mediaInfos:[{
+						title: "<b>《十二美人图》</b>",
+					    type: "image", // Autocasts as new ImageMediaInfo object
+					    caption: "《持表对菊图》",
+					    // Autocasts as new ImageMediaInfoValue object
+					    value: {
+					      sourceURL: "https://tse2-mm.cn.bing.net/th/id/OIP-C.0gAWc6-lv4HyseaELI__3gHaN1?pid=ImgDet&rs=1"
+						}
+					}]
+					}]
+				};
+				
+				const qing = new FeatureLayer({
+					url:"https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/Qing_Dynasty/FeatureServer",
+					popupTemplate: popupQing
+				});
+				map5.add(qing)
+		
+				var tangRenderer = new SimpleRenderer({
+				  type: "simple",  // autocasts as new SimpleRenderer()
+				  symbol: {
+					type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+					color: [255, 128, 200, 0.5],
+					style: "diagonal-cross",
+					outline: {  // autocasts as new SimpleLineSymbol()
+						width: 1,
+						color: [255, 128, 200, 1]
+				    }
+				  }
+				});
+				tang741.renderer = tangRenderer;
+				
+				/*const songRenderer = new UniqueValueRenderer({	//old renderer
+					type: "unique-value",  // autocasts as new UniqueValueRenderer()
+					field: "LABEL_ENG",
+					legendOptions:{
+						title: "Classification"
+					},
+					defaultSymbol:{
+						type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+						color: "#e0c9af",
+						outline: {  // autocasts as new SimpleLineSymbol()
+							width: 1,
+							color: [255, 0, 0, 0.2]
+						}
+					},
+					uniqueValueInfos: [
+						new UniqueValueInfo({
+							label: "Song",
+							value: "Song",
+						    symbol: {
+								type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+								color: "#b8f5e7",
+								outline: {  // autocasts as new SimpleLineSymbol()
+									width: 1,
+									color: [255, 0, 0, 0.2]
+								}
+						    }
+						}),
+						new UniqueValueInfo({
+							label: "Liao",
+							value: "Liao",
+						    symbol: {
+						      type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+						      color: "#ffe3d6",
+							  outline: {  // autocasts as new SimpleLineSymbol()
+							  	width: 1,
+							  	color: [255, 0, 0, 0.2]
+							  }
+						    }
+						}),
+						new UniqueValueInfo({
+							label: "Southern Tang",
+						    value: "Southern Tang",
+						    symbol: {
+						      type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+						      color: "#e8add4",
+							  outline: {  // autocasts as new SimpleLineSymbol()
+							  	width: 1,
+							  	color: [255, 0, 0, 0.2]
+							  }
+							},
+						})
+					]
+				});
+				ad971.renderer = songRenderer;*/
+				var songRenderer = new SimpleRenderer({
+					type: "simple",  // autocasts as new SimpleRenderer()
+					symbol: {
+						type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+						color: "#e8add4",
+						style: "vertical",
+						outline: {  // autocasts as new SimpleLineSymbol()
+							width: 1,
+							color: [255, 0, 0, 0.2]
+						}
+					}
+				});
+				song.renderer = songRenderer;
+				
+				var yuanRenderer = new SimpleRenderer({
+					type: "simple",  // autocasts as new SimpleRenderer()
+					symbol: {
+						type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+						color: [50,205,50, 0.5],
+						style: "horizontal",
+						outline: {  // autocasts as new SimpleLineSymbol()
+							width: 1,
+							color: [50,205,50, 1]
+						}
+					}
+				});
+				yuan.renderer = yuanRenderer;
+				
+				var mingRenderer = new SimpleRenderer({
+				  type: "simple",  // autocasts as new SimpleRenderer()
+				  symbol: {
+					type: "picture-fill",  // autocasts as new PictureFillSymbol()
+					url: "https://img95.699pic.com/element/40118/1091.png_300.png!/fh/188",
+					width: "12",
+					height: "12",
+					outline: {
+						color: [32,178,170, 0.5],
+						width: "1"
+				    }
+				  }
+				});
+				ming1582.renderer = mingRenderer;
+				
+				var qingRenderer = new SimpleRenderer({
+				  type: "simple",  // autocasts as new SimpleRenderer()
+				  symbol: {
+					type: "picture-fill",  // autocasts as new PictureFillSymbol()
+					url: "https://img95.699pic.com/element/40095/2645.png_300.png!/fw/431/clip/0x300a0a0",
+					width: "24",
+					height: "24",
+					outline: {
+						color: [186,85,211, 0.5],
+						width: "1"
+				    }
+				  }
+				});
+				qing.renderer = qingRenderer;
+				
+				let legend1 = new Legend({
+					view: view1,
+				});
+				view1.ui.add(legend1, "top-right");
+			
+				let legend2 = new Legend({
+					view: view2,
+				});
+				view2.ui.add(legend2, "top-right");
+				
+				let legend3 = new Legend({
+					view: view3,
+				});
+				view3.ui.add(legend3, "top-right");
+				
+				let legend4 = new Legend({
+					view: view4,
+				});
+				view4.ui.add(legend4, "top-right");
+				
+				let legend5 = new Legend({
+					view: view5,
+				});
+				view5.ui.add(legend5, "top-right");
+			});
+		</script>
+	</head>
+	<body>
+        <div class="container">
+			<div class="page page-1">
+				<section id="about-me" class="container bg-white text-center pt-4 pb-2">
+					<h2 class="font-weight-bold display-5 mx-auto">About Me</h2>
+					<div class="content text-left p-4">
+					    <h3>Welcome To The History Of Traditional Women's Costume</h3>
+						<p style="top: 300px;width: 50%;margin: auto;border-style:inset;">中国传统服饰是中国人的传统服饰，被誉为中国国粹和中国服饰之代表，是中华民族乃至人类社会创造的宝贵财富。中国传统服装有两种基本形制，即上衣下裳制和衣裳连属制。<br>
+							上衣下裳制，相传起于传说中的黄帝时代，《易·系辞下》载：“黄帝、尧、舜垂衣裳而天下治，盖取诸乾坤。”这一传说可以在甘肃出土的彩陶文化的陶绘中，得到印证。这可以说是中国最早的衣裳制度的基本形式。<br>
+							汉服是中国传统服饰的代表，是中国“衣冠上国”、“礼仪之邦”、“锦绣中华”、赛里斯国的体现，承载了汉族的染织绣等杰出工艺和美学，传承了30多项中国非物质文化遗产以及受保护的中国工艺美术。</p>
+					</div>
+					<div>
+						<p style="color: #000000;font-size: 10px;text-align:center;background-color: #00FFA1;">go down</p>
+					</div>
+				</section>
+			</div>
+			<div class="page page-2">
+				<div style="float:left;width: 100%;height: 100%;">
+					<div id="viewDiv1">唐朝</div>
+					<div id="Div1">
+						<p style="font-size:medium;border:5px solid brown;font-family: 'bodoni mt black';color: #000000;">Tap anywhere within the layer<br>点击图层查询信息哦！</p>
+						<p style="font-size: 15px;text-align: left;color: #E8ADD4;"><b>袅娜腰肢淡薄妆，六朝宫样窄衣裳</b></p>
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;">窄袖窄襦</p>
+						<p style="font-size: xx-small;text-align: left;">在隋代、初唐的绘画、雕塑作品中，常可见女子上身穿着窄袖衫，长度仅到腰脐部，下身穿着长裙，腰部系长带，肩披中帛；脚穿高头鞋履。唐代诗人白居易曾经对窄袖衣衫特意写了一首诗，如：“绣帽珠稠缀，香衫袖窄裁。”</p>
+						
+						<p style="font-size: 15px;text-align: left;color: #E8ADD4;"><b>荷叶罗裙一色裁，芙蓉向脸两边开</b></p>
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;">花笼裙</p>
+						<p style="font-size: xx-small;text-align: left;">《旧唐书-五行志》记载“镂金为花鸟，细如丝发， 鸟子大如黍米，眼鼻嘴甲俱成，明目者今见之。”花笼裙有几大特点：轻薄、细软、薄明，属于丝织品中的“单丝罗”。早期这种服饰主要用在权贵们喝酒时伴舞的舞女身上，有种迷迷糊糊的朦胧美，后期这种开始盛行在大庭广众之下，而且出现了上饰织文或绣文的花裙，罩在其它裙之外。</p>
+						
+						<p style="font-size: 15px;text-align: left;color: #E8ADD4;"><b>移舟木兰掉，行洒石榴花</b></p>
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;">女着男装</p>
+						<p style="font-size: xx-small;text-align: left;">胡服是唐朝的外来服装，属于舶来品。据说，唐朝生活了很多的胡人，安禄山就是胡人的典型代表，他们的衣服因为按照胡人的风格和习俗打造的，唐朝属于一种外来服饰的入侵，带着好奇，一时间大受欢迎。这种服装样式:头戴缀满宝石和簪钗的桃形多凤冠，身旁折领窄袖长袍，袖口与领边均有绣金的纹饰，足有软线靴。</p>
+						
+					</div>
+				</div>
+			</div>
+            <div class="page page-3">
+				<div style="float:left;width: 100%;height: 100%;">
+					<div id="viewDiv2">宋朝</div>
+					<div id="Div2">
+						<p style="font-size:medium;border:5px solid brown;font-family: 'bodoni mt black';color: #000000;">Tap anywhere within the layer<br>点击图层查询信息哦！</p>
+						<p style="font-size: 6px;text-align: left;color: #aa5500;"><b>宋代十分重视恢复汉族服饰传统，强调“恢尧舜之典，总夏商之礼”。“程朱理学”在当时的哲学体系中占有统治地位，对服饰产生了重要影响，呈现出质朴、典雅的“理性之美”。<br>宋代女子的服装，总体以瘦、细、长为特点，色调一反唐时期的浓艳，以淡雅、文静为主。</b></p>
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;">褙子风韵</p>
+						<p style="font-size: 6px;text-align: left;">褙子，也写作“背子”，是宋代最具代表性，是不分等级与尊卑的通用性服装款式。<br>其形制如衫，但偏窄小。两裾分离，前后片不缝合，腋下或背后垂有带子。其窄长而平顺的外观使之成为宋代最具代表性的服饰。</p>
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;">轻衫薄裙</p>
+						<p style="font-size: 6px;text-align: left;">宋代服装面料以绫、纱等轻薄面料为尚。单衫是用黄色和粉红色的纱制成，袖子较短，一般以轻薄质料和浅淡颜色为主，即所谓的“轻衫罩体香罗碧”。<br>宋代女子下身穿裙，多存唐代遗制，时兴“石榴”、“千褶”和“百迭”等名目。裙子、裙带都以长为美，并作上细密的褶裥使裙身显得更为修长。</p>
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;">吊敦膝裤</p>
+						<p style="font-size: 6px;text-align: left;">宋代的裤子质料以纱、罗、绢、绸、绮、绫为多，并装饰有平素纹、大小提花等图案，裤子的颜色以驼、黄、棕、褐等色为主。</p>
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;">乌靴金莲</p>
+						<p style="font-size: 6px;text-align: left;">从宋代开始，中国女性流行用布帛把脚缠裹起来的风气。这种极为自虐的审美习惯，在当时却得到了许多文人雅士的赞美之词，如“金莲”、“香钩”等。</p>
+						
+					</div>
+				</div>
+            </div>
+			<div class="page page-4">
+				<div style="float:left;width: 100%;height: 100%;">
+					<div id="viewDiv3">元朝</div>
+					<div id="Div3">
+						<p style="font-size:medium;border:5px solid brown;font-family: 'bodoni mt black';color: #000000;">Tap anywhere within the layer<br>点击图层查询信息哦！</p>
+						<p style="font-size: 14px;text-align: left;color: #00aa00;background-color: #E2E3C9;">元代贵族妇女一般戴皮帽，穿貂皮袍。这种袍比较宽大，多左衽，袖口较窄，袍长曳地。有的女袍，用大红织金、吉贝锦、蒙茸加工而成。皇后、妃子、侍从穿翻鸿兽锦袍、青丝缕金袍、琐里绿蒙衫。贵族、宫女多穿红靴。“衣裳光彩照暮春，红靴着地轻无尘”(萨都剌《王孙曲》)描写的正是元代贵妇人的衣着打扮。</p>
+						<p style="font-size: 14px;text-align: left;color: #00aa00;background-color: #E2E3C9;">元代最具特色的女帽是姑姑冠，也叫故故、固罟〔gu古〕、顾姑、固姑等。它上宽下窄，好像一个倒过来的瓷花瓶。通常用铁丝和桦木制成骨架，外用皮、绒、绢等裱糊，再加上金箔珠花等饰物，走起路来，冠上珠串摇摇晃晃，冠顶翎枝迎风抖动。这是皇后、妃子、大臣妻子戴的贵冠。有诗这样描写：“双柳垂鬟别样梳，醉来马上倩人扶。江南有眼何曾见，争卷珠帘看固姑。”(蒋平仲《山房随笔》引聂碧窗《咏北妇》)这种女冠可能与蒙古族生活习俗有关。他们过游牧生活，骑马行走在荒原上，冠体高耸，易于辨认。元代灭亡后，这种冠式随之消失。</p>
+						<p style="font-size: 14px;text-align: left;color: #00aa00;background-color: #E2E3C9;">元代妇女，不分贵贱都可以装饰假发，时称(上髟下狄)〔di笛〕髻。元代关汉卿《窦娥冤》：“梳着个霜雪般的(上髟下狄)髻，怎戴那销金锦盖头?”这里描写的就是假发。</b>
+					</div>
+				</div>
+			</div>
+			<div class="page page-5">
+				<div style="float:left;width: 100%;height: 100%;">
+					<div id="viewDiv4">明朝</div>
+					<div id="Div4">
+						<p style="font-size:medium;border:5px solid brown;font-family: 'bodoni mt black';color: #000000;">Tap anywhere within the layer<br>点击图层查询信息哦！</p>
+						<p style="font-size: 6px;text-align: left;color: #ffff7f;"><b>明代妇女的服装，主要有衫、袄、霞帔、褙子、比甲及裙子等。衣服的基本样式，大多仿自唐宋，一般都为右衽，恢复了汉族的习俗。</b></p>
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;background-color:cornsilk;">霞帔</p>
+						<p style="font-size: 6px;text-align: left;">披帛以一幅丝帛绕过肩背，交于胸前。《事林广记·服饰类》载：“晋永嘉中，制绛晕帔子，令王妃以下通服之。”</p>
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;background-color:cornsilk;">比甲</p>
+						<p style="font-size: 6px;text-align: left;">比甲即无领无袖的对襟马甲，本为元制，但北方妇女尤为喜爱，作为日常之服。
+						<br>《元史》记载：“又制一衣，前有裳无衽，后长倍于前，亦去领袖，以两襻，名曰‘马甲’，以便弓马，时皆仿之。”</p>
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;background-color:cornsilk;">水田衣</p>
+						<p style="font-size: 6px;text-align: left;">水田衣是一种以各色零碎锦料拼合缝制成的服装，形似僧人所穿的袈裟，因整件服装织料 色彩互相交错形如水田而得名。
+						<p style="font-size: xx-small;text-align: left;color:cornflowerblue;background-color:cornsilk;">襦裙</p>
+						<p style="font-size: 6px;text-align: left;">上襦为交领、长袖短衣。裙子的颜色，初尚浅淡，虽有纹饰，但并不明显。至崇祯初年，裙子多为素白，即使刺绣纹样，也仅在裙幅下边一、二寸部位缀以一条花边，作为压脚。
+						<br>裙幅初为六幅，这是遵循古仪，即所谓“裙拖六幅湘江水”；到了明代末年，裙幅始用八幅，腰间细褶数十，行动辄如水纹。到了明末，裙幅也增至十幅，每褶都有一种颜色，轻描淡绘，色极清雅，微风吹来，色如月华，故称“月华裙”。
+						<br>此外，还有用绸缎剪成大小规则的条子，每条绣以花鸟图纹，另在两边镶以金线，称凤尾裙；又有一种，以整锻折以细道，称为百褶裙。</p>
+					</div>
+				</div>
+			</div>
+			<div class="page page-6">
+				<div style="float:left;width: 100%;height: 100%;">
+					<div id="viewDiv5">清朝</div>
+					<div id="Div5">
+						<p style="font-size:medium;border:5px solid brown;font-family: 'bodoni mt black';color: #000000;">Tap anywhere within the layer<br>点击图层查询信息哦！</p>
+						<p style="font-size: xx-small;text-align: left;color:fuchsia;background-color:thistle;">康熙年间</p>
+						<p style="font-size: 6px;text-align: left;color:black;">贵族妇女流行一种身着黑领金色团花纹或片金花纹的褐色袍，外加浅绿色镶黑边并有金绣纹饰的大褂。襟前有佩饰，头上梳大髻，也有包头巾样式。侍女是着黑领绿袍，金纽扣，头上饰翠花，并有珠珰垂肩。</p>
+						<p style="font-size: xx-small;text-align: left;color:fuchsia;background-color:thistle;">乾隆年间</p>
+						<p style="font-size: 6px;text-align: left;color:black;">妇女着镶粉色边饰的浅黄色衫，外着黑色大云头背心。裙边或裤腿镶有黑色绣花栏干，足着红色弓鞋。也有着朱衣，袖边镶白缎阔栏干，足着红色绣花鞋。也有的着镶有黑边饰的无领宝蓝色衣者，襟前挂香牌一串，纽扣上挂时辰表、牙签、香串等小物件。也有的在衣服外面结桔黄色带子，垂在腰胯两侧与衫齐，带子的端头有绣纹。</p>
+						<p style="font-size: xx-small;text-align: left;color:fuchsia;background-color:thistle;">嘉庆道光年间</p>
+						<p style="font-size: 6px;text-align: left;color:black;">女子多着低领蓝衣紫裙，裙子镜面和底边均镶黑色绣花栏干，袖口镶白底全彩绣牡丹阔边。也有的袖口和衣服裙子镶阔栏干，裙带垂至膝下，肩有镶滚云肩。也有的着团花绿衣浅红色裙，裙的镜面上绣少许折枝花数朵，披云肩垂流苏。</p>
+						<p style="font-size: xx-small;text-align: left;color:fuchsia;background-color:thistle;">同治年间</p>
+						<p style="font-size: 6px;text-align: left;color:black;">流行蓝缎地镶阔边的绸裤带，带宽一丈或数丈，带端有绣纹。无论着裙着裤均有系带的习俗。腰带系后垂至膝下为尚。</p>
+						<p style="font-size: xx-small;text-align: left;color:fuchsia;background-color:thistle;">光绪中期</p>
+						<p style="font-size: 6px;text-align: left;color:black;">妇女衣裙渐短，袖子渐宽，带长过膝露出约一尺有余，走动时随风飘摆，也有将流苏缝于带端，摆动时呈现异样效果。服色以选用湖蓝、桃红为多，也有宝石蓝和大红等色。</p>
+						
+					</div>
+				</div>
+			</div>	
+        </div>
+		<script>
+            const container = document.querySelector('.container') // container of pages
+            const pageH = window.innerHeight // height of one page
+            const pageCount = document.querySelectorAll('.page').length
+
+            const scrollDuation = 1e3 // 1s
+            let containerScrollTop = 0 // scrollTop of container
+
+            const onePageScrollHandler = throttle(onePageScroll, scrollDuation)
+            window.addEventListener('wheel', onePageScrollHandler)
+
+            function onePageScroll(evt) {
+                const direction = evt.wheelDelta < 0 ? 'down' : 'up' // direction of scroll
+                if (direction === 'down') { // scroll to next page
+                    nextPage()
+                }
+
+                if (direction === 'up') { // scroll to prev page
+                    prevPage()
+                }
+            }
+
+            function throttle(fn, delay) { // 函数节流：防止频繁触发
+                let execTime = 0 // exec time of wheel-handler
+                return function () {
+                    const curTime = Date.now()
+                    if (execTime + delay < curTime) {
+                        fn.apply(this, arguments)
+                        execTime = curTime
+                    }
+                }
+            }
+
+            function nextPage() {
+                if ( !isReachBot() ) {
+                    containerScrollTop += pageH
+                    container.style.transform = `translateY(${ -containerScrollTop }px)`
+                }
+            }
+
+            function isReachBot() {
+                // if container is scroll to bot.
+                return containerScrollTop === (pageCount - 1) * pageH
+            }
+
+            function prevPage() {
+                if (containerScrollTop > 0) {
+                    containerScrollTop -= pageH
+                    container.style.transform = `translateY(${ -containerScrollTop }px)`
+                }
+            }
+        </script>
+	</body>
+</html>
